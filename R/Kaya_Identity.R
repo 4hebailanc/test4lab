@@ -13,14 +13,22 @@
 
 library(checkmate)
 library(testthat)
-Kaya_Equation <- function(pop=82.4,gdp=44,enInt=5,carbInt=0.05){
-  assert_numeric(c(pop,gdp,enInt,carbInt),lower=0)
+Kaya_Equation <- function(pop = 82.4, gdp = 44, enInt = 5, carbInt = 0.05, output_type = "CO2") {
+  assert_choice(output_type, c("CO2", "C"))
+  assert_numeric(c(pop, gdp, enInt, carbInt), lower = 0)
+  if (output_type == "CO2") {
+    return(co2 = pop * gdp * enInt * carbInt)
+  }
 
-  return( co2=pop*gdp*enInt*carbInt)
+  if (output_type == "C") {
+    return(c = pop * gdp * enInt * carbInt / 3.67)
+  }
 }
 
 
 # Unit Test
-expect_that(Kaya_Equation(pop=82.4,gdp=44,enInt=5,carbInt=0.05), equals(906.4))
-expect_error(c(Kaya_Equation(pop = -1),Kaya_Equation(gdp=-1)))
+expect_that(Kaya_Equation(pop = 82.4, gdp = 44, enInt = 5, carbInt = 0.05), equals(906.4))
+expect_error(c(Kaya_Equation(pop = -1), Kaya_Equation(gdp = -1)))
+# output_type test
+expect_equal(Kaya_Equation(pop = 82.4, gdp = 44, enInt = 5, carbInt = 0.05,output_type = 'C'),246.9755,tolerance=0.002)
 
